@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
+
 @RestController
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
@@ -17,8 +20,8 @@ public class AuthenticationRestApi {
         return authenticationService.register(userRegister);
     }
 
-    @GetMapping(path = "/hello-world")
-    public String helloWorld() {
-        return "Hello World";
+    @GetMapping(path = "/login")
+    public Map<String, String> login() {
+        return Collections.singletonMap("message", "You are logged in successfully");
     }
 }

@@ -1,11 +1,8 @@
 package com.todoapp.api;
 
-import com.todoapp.entity.TodoList;
 import com.todoapp.entity.model.TodoListDTO;
 import com.todoapp.service.TodoListService;
-import com.todoapp.service.TodoListServiceImpl;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,16 +38,24 @@ public class TodoListRestApi {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTodoList(@PathVariable long id) {
-        todoListService.delete(id);
-      return ResponseEntity.ok().build();
+        Optional<TodoListDTO> todoListDTO = todoListService.findById(id);
+
+        if (todoListDTO.isPresent()) {
+            todoListService.delete(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<TodoListDTO> replaceTodoList(@PathVariable Long id,
-                                                    @RequestBody TodoListDTO newTodoList) {
-       todoListService.save(newTodoList);
-       return ResponseEntity.ok().build();
+    @PutMapping
+    public ResponseEntity<TodoListDTO> updateTodoList(@RequestBody TodoListDTO newTodoList) {
 
+        Optional<TodoListDTO> todoListDTO = todoListService.findById(newTodoList.getId());
 
+        if (todoListDTO.isPresent()) {
+            return ResponseEntity.ok(todoListService.update(newTodoList));
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }

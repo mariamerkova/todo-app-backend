@@ -6,6 +6,7 @@ import com.todoapp.repository.TodoListRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,10 +25,12 @@ public class TodoListServiceImpl implements TodoListService{
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void delete(Long id) {
         todoListRepository.deleteById(id);
     }
 
+    @Transactional
     public TodoListDTO save(TodoListDTO todoListDTO) {
         TodoList todoList = todoListRepository.save(convertTodoListToTodoListDTO(todoListDTO));
         return convertTodoListDTToTodoList(todoList);
@@ -43,10 +46,16 @@ public class TodoListServiceImpl implements TodoListService{
         return Optional.empty();
     }
 
+    @Transactional
     @Override
     public TodoListDTO update(TodoListDTO todoListDTO) {
-        TodoList todoList = todoListRepository.save(convertTodoListToTodoListDTO(todoListDTO));
-        return convertTodoListDTToTodoList(todoList);
+        Optional<TodoList> todoList = todoListRepository.findById(todoListDTO.getId());
+
+        if (todoList.isPresent()) {
+            todoList.get().setName(todoListDTO.getName());
+        }
+
+        return convertTodoListDTToTodoList(todoListRepository.save(todoList.get()));
     }
 
 

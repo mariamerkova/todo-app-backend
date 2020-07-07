@@ -1,12 +1,16 @@
 package com.todoapp.service;
 
 import com.todoapp.entity.TodoList;
+import com.todoapp.entity.User;
 import com.todoapp.entity.model.TodoListDTO;
 import com.todoapp.repository.TodoListRepository;
+import com.todoapp.repository.UserRepoitory;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,11 +22,19 @@ public class TodoListServiceImpl implements TodoListService{
 
     private TodoListRepository todoListRepository;
 
-    public List<TodoListDTO> findAll() {
-        return todoListRepository.findAll()
-                .stream()
-                .map(todoList -> convertTodoListDTToTodoList(todoList))
-                .collect(Collectors.toList());
+    private UserRepoitory userRepoitory;
+
+    public List<TodoListDTO> findAll(String name) {
+        Optional<User> user = userRepoitory.findByUsername(name);
+
+        if (user.isPresent()) {
+            return todoListRepository.findByUser(user.get())
+                    .stream()
+                    .map(todoList -> convertTodoListDTToTodoList(todoList))
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @Transactional
@@ -31,9 +43,15 @@ public class TodoListServiceImpl implements TodoListService{
     }
 
     @Transactional
-    public TodoListDTO save(TodoListDTO todoListDTO) {
-        TodoList todoList = todoListRepository.save(convertTodoListToTodoListDTO(todoListDTO));
-        return convertTodoListDTToTodoList(todoList);
+    public TodoListDTO save(String username, TodoListDTO todoListDTO) throws NotFoundException {
+        Optional<User> user = userRepoitory.findByUsername(username);
+        if (user.isPresent()) {
+            TodoList todoList = todoListRepository.save(convertTodoListToTodoListDTO(user.get(), todoListDTO));
+            return convertTodoListDTToTodoList(todoList);
+        } else {
+            throw new NotFoundException("User with such username does not exist");
+        }
+
     }
 
     public Optional<TodoListDTO> findById(Long id) {
@@ -59,10 +77,11 @@ public class TodoListServiceImpl implements TodoListService{
     }
 
 
-    private TodoList convertTodoListToTodoListDTO(TodoListDTO todoListDTO) {
+    private TodoList convertTodoListToTodoListDTO(User user, TodoListDTO todoListDTO) {
         TodoList todoList = new TodoList();
         todoList.setId(todoListDTO.getId());
         todoList.setName(todoListDTO.getName());
+        todoList.setUser(user);
         return todoList;
     }
 

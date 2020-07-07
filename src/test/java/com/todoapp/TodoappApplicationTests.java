@@ -1,7 +1,9 @@
 package com.todoapp;
 
 import com.todoapp.entity.TodoList;
+import com.todoapp.entity.User;
 import com.todoapp.repository.TodoListRepository;
+import com.todoapp.repository.UserRepoitory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ class TodoappApplicationTests {
     @Autowired
     private TodoListRepository todoListRepository;
 
+    @Autowired
+    private UserRepoitory userRepoitory;
+
     @Test
     void contextLoads() {
     }
@@ -25,9 +30,16 @@ class TodoappApplicationTests {
     @Transactional
     @Rollback
     public void testGetAllTodoLists() {
+        User user = new User();
+        user.setPassword("mimito");
+        user.setActive(true);
+        user.setUsername("mimito");
+        user.setRoles("manager");
+
+        userRepoitory.save(user);
         TodoList todoList = new TodoList();
         todoList.setName("Mimi");
-
+        todoList.setUser(user);
         todoList = todoListRepository.save(todoList);
         Long todoListId = todoList.getId();
         todoList = null;
@@ -43,11 +55,20 @@ class TodoappApplicationTests {
     @Transactional
     @Rollback
     public void testUpdateTodoList() {
+        User user = new User();
+        user.setPassword("mimito");
+        user.setActive(true);
+        user.setUsername("mimito");
+        user.setRoles("manager");
+        userRepoitory.save(user);
+
         TodoList todoList = new TodoList();
         todoList.setName("Mishi");
+        todoList.setUser(user);
         todoList = todoListRepository.save(todoList);
         TodoList todoList1 = new TodoList();
         todoList1.setName("Mishito");
+        todoList1.setUser(user);
         todoList = todoListRepository.save(todoList1);
 
         Long todoListId = todoList.getId();
@@ -63,8 +84,16 @@ class TodoappApplicationTests {
     @Transactional
     @Rollback
     public void testDeleteTodoList() {
+        User user = new User();
+        user.setPassword("mimito");
+        user.setActive(true);
+        user.setUsername("mimito");
+        user.setRoles("manager");
+        userRepoitory.save(user);
+
         TodoList todoList = new TodoList();
         todoList.setName("Vasko");
+        todoList.setUser(user);
         todoList = todoListRepository.save(todoList);
         Long todoListId = todoList.getId();
 

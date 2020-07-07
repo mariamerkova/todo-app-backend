@@ -1,11 +1,14 @@
 package com.todoapp.api;
 
 import com.todoapp.entity.model.TodoListDTO;
+import com.todoapp.repository.TodoListRepository;
 import com.todoapp.service.TodoListService;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +18,8 @@ import java.util.Optional;
 public class TodoListRestApi {
 
     private TodoListService todoListService;
+
+    private TodoListRepository todoListRepository;
 
     @GetMapping("/{id}")
     public ResponseEntity<TodoListDTO> getSingleTodolist(@PathVariable Long id) {
@@ -26,14 +31,14 @@ public class TodoListRestApi {
       return ResponseEntity.notFound().build();
     }
 
-    @GetMapping
-    public ResponseEntity<List<TodoListDTO>> getAllTodoList() {
-        return ResponseEntity.ok(todoListService.findAll());
+    @GetMapping(path = "/owned-to/{name}")
+    public ResponseEntity<List<TodoListDTO>> getAllTodoList(@PathVariable String name) {
+        return ResponseEntity.ok(todoListService.findAll(name));
     }
 
     @PostMapping
-    public ResponseEntity<TodoListDTO> saveTodoList(@RequestBody TodoListDTO todoListDTO) {
-          return ResponseEntity.ok(todoListService.save(todoListDTO));
+    public ResponseEntity<TodoListDTO> saveTodoList(Principal principal, @RequestBody TodoListDTO todoListDTO) throws NotFoundException {
+        return ResponseEntity.ok(todoListService.save(principal.getName(), todoListDTO));
     }
 
     @DeleteMapping("/{id}")

@@ -15,6 +15,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path = "/todo-list")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class TodoListRestApi {
 
     private TodoListService todoListService;

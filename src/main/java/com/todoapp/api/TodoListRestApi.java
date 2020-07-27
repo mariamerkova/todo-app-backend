@@ -53,7 +53,7 @@ public class TodoListRestApi {
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<TodoListDTO> updateTodoList(@RequestBody TodoListDTO newTodoList) {
 
         Optional<TodoListDTO> todoListDTO = todoListService.findById(newTodoList.getId());

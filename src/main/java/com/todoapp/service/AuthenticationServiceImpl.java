@@ -3,7 +3,7 @@ package com.todoapp.service;
 import com.todoapp.entity.User;
 import com.todoapp.entity.model.UserRegister;
 import com.todoapp.exception.UserAlreadyExistException;
-import com.todoapp.repository.UserRepoitory;
+import com.todoapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.Optional;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Autowired
-    private UserRepoitory userRepoitory;
+    private UserRepository userRepoitory;
 
     @Autowired
     private PasswordEncoder passwordEncoder;

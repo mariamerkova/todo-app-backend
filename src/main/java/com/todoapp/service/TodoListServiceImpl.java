@@ -4,7 +4,7 @@ import com.todoapp.entity.TodoList;
 import com.todoapp.entity.User;
 import com.todoapp.entity.model.TodoListDTO;
 import com.todoapp.repository.TodoListRepository;
-import com.todoapp.repository.UserRepoitory;
+import com.todoapp.repository.UserRepository;
 import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class TodoListServiceImpl implements TodoListService{
 
     private TodoListRepository todoListRepository;
 
-    private UserRepoitory userRepoitory;
+    private UserRepository userRepoitory;
 
     public List<TodoListDTO> findAll(String name) {
         Optional<User> user = userRepoitory.findByUsername(name);
